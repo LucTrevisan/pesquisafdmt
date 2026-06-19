@@ -274,6 +274,7 @@ var state = {
   dashboardData: [],
   dashboardLoading: true,
   dashboardError: "",
+  confirmingReset: false,
   filterProject: "__all__",
   knownProjects: []
 };
@@ -680,6 +681,28 @@ function renderProfessorView(){
   refreshBtn.textContent = state.dashboardLoading ? "Atualizando..." : "Atualizar dados";
   refreshBtn.onclick = function(){ refreshDashboard(); };
   topRow.appendChild(refreshBtn);
+
+  if(!state.dashboardLoading && state.dashboardData.length > 0){
+    var resetBtn = document.createElement("button");
+    resetBtn.className = "btn ghost";
+    if(state.confirmingReset){
+      resetBtn.textContent = "Confirmar: apagar " + state.dashboardData.length + " avaliação(ões)?";
+      resetBtn.style.color = "var(--red)";
+      resetBtn.style.borderColor = "rgba(255,92,92,0.5)";
+      resetBtn.onclick = function(){ handleResetData(); };
+
+      var cancelBtn = document.createElement("button");
+      cancelBtn.className = "btn ghost";
+      cancelBtn.textContent = "Cancelar";
+      cancelBtn.onclick = function(){ state.confirmingReset = false; render(); };
+      topRow.appendChild(resetBtn);
+      topRow.appendChild(cancelBtn);
+    } else {
+      resetBtn.textContent = "Zerar dados";
+      resetBtn.onclick = function(){ state.confirmingReset = true; render(); };
+      topRow.appendChild(resetBtn);
+    }
+  }
   container.appendChild(topRow);
 
   if(state.dashboardLoading){
@@ -935,6 +958,21 @@ async function refreshDashboard(){
   }
   state.dashboardLoading = false;
   if(state.view === "professor") render();
+}
+
+async function handleResetData(){
+  state.confirmingReset = false;
+  state.dashboardLoading = true;
+  state.dashboardError = "";
+  render();
+  try{
+    await jsonbinWrite({ reviews: [] });
+    state.dashboardData = [];
+  }catch(e){
+    state.dashboardError = "Não foi possível apagar os dados (" + (e && e.message ? e.message : "erro desconhecido") + "). Tente novamente.";
+  }
+  state.dashboardLoading = false;
+  render();
 }
 
 /* ============================================================
