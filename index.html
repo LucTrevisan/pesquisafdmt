@@ -245,8 +245,19 @@ var CRITERIA = [
 
 var STAR_HINTS = ["", "Fraco", "Regular", "Bom", "Muito bom", "Excelente"];
 
-var STORAGE_KEY_PREFIX = "pitch_review:";
-var PROJECTS_KEY = "pitch_projects_list";
+/* ============================================================
+   CONFIGURAÇÃO DO BANCO DE DADOS (JSONBin.io)
+   ------------------------------------------------------------
+   1. Crie uma conta gratuita em https://jsonbin.io
+   2. Vá em "API Keys" e copie sua X-Master-Key
+   3. Crie um Bin novo (pode ser vazio: {} ) e copie o Bin ID
+      (aparece na URL do bin, ex: 64f1a2b3c4d5e6f7a8b9c0d1)
+   4. Cole os dois valores abaixo, entre aspas
+   ============================================================ */
+var JSONBIN_MASTER_KEY = "$2a$10$f0.Kk4NC0H4ynEc0b0m0pOXdodzGi0j3kwGdoNJfcM8c/4mzWi5vW";
+var JSONBIN_BIN_ID = "$2a$10$eDtSyTVtt7MeH/xPYcDq7uk87FXTzOf5Iiob80wTZ5vBbPR.NAsMe";
+
+var JSONBIN_BASE = "https://api.jsonbin.io/v3/b/" + JSONBIN_BIN_ID;
 
 /* ============================================================
    STATE
@@ -262,6 +273,7 @@ var state = {
   errorMsg: "",
   dashboardData: [],
   dashboardLoading: true,
+  dashboardError: "",
   filterProject: "__all__",
   knownProjects: []
 };
@@ -269,58 +281,57 @@ var state = {
 CRITERIA.forEach(function(c){ state.ratings[c.key] = 0; });
 
 /* ============================================================
-   STORAGE HELPERS
+   STORAGE HELPERS — JSONBin.io
+   Estrutura do bin: { "reviews": [ {...}, {...} ] }
    ============================================================ */
 function uid(){
   return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 }
 
-function safeParse(str, fallback){
-  try { return JSON.parse(str); } catch(e){ return fallback; }
+function isConfigured(){
+  return JSONBIN_MASTER_KEY && JSONBIN_BIN_ID &&
+    JSONBIN_MASTER_KEY.indexOf("COLE_") !== 0 &&
+    JSONBIN_BIN_ID.indexOf("COLE_") !== 0;
 }
 
-async function loadProjectsList(){
-  try{
-    var res = await window.storage.get(PROJECTS_KEY, true);
-    if(res && res.value){
-      return safeParse(res.value, []);
-    }
-  }catch(e){}
-  return [];
-}
-
-async function addProjectToList(name){
-  var list = await loadProjectsList();
-  if(list.indexOf(name) === -1){
-    list.push(name);
-    try{
-      await window.storage.set(PROJECTS_KEY, JSON.stringify(list), true);
-    }catch(e){}
+async function jsonbinRead(){
+  var res = await fetch(JSONBIN_BASE + "/latest", {
+    method: "GET",
+    headers: { "X-Master-Key": JSONBIN_MASTER_KEY }
+  });
+  if(!res.ok){
+    throw new Error("Falha ao ler dados (HTTP " + res.status + ")");
   }
+  var data = await res.json();
+  var record = (data && data.record) ? data.record : {};
+  if(!Array.isArray(record.reviews)) record.reviews = [];
+  return record;
+}
+
+async function jsonbinWrite(record){
+  var res = await fetch(JSONBIN_BASE, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Master-Key": JSONBIN_MASTER_KEY
+    },
+    body: JSON.stringify(record)
+  });
+  if(!res.ok){
+    throw new Error("Falha ao salvar dados (HTTP " + res.status + ")");
+  }
+  return res.json();
 }
 
 async function saveReview(review){
-  var key = STORAGE_KEY_PREFIX + uid();
-  await window.storage.set(key, JSON.stringify(review), true);
-  await addProjectToList(review.projectName);
+  var record = await jsonbinRead();
+  record.reviews.push(review);
+  await jsonbinWrite(record);
 }
 
 async function loadAllReviews(){
-  var out = [];
-  try{
-    var listRes = await window.storage.list(STORAGE_KEY_PREFIX, true);
-    if(listRes && listRes.keys && listRes.keys.length){
-      for(var i=0;i<listRes.keys.length;i++){
-        try{
-          var item = await window.storage.get(listRes.keys[i], true);
-          if(item && item.value){
-            var parsed = safeParse(item.value, null);
-            if(parsed) out.push(parsed);
-          }
-        }catch(e){}
-      }
-    }
-  }catch(e){}
+  var record = await jsonbinRead();
+  var out = record.reviews.slice();
   out.sort(function(a,b){ return (b.ts||0) - (a.ts||0); });
   return out;
 }
@@ -578,6 +589,12 @@ function resetForm(){
 async function handleSubmit(){
   state.errorMsg = "";
 
+  if(!isConfigured()){
+    state.errorMsg = "O formulário ainda não foi configurado pelo professor (faltam as chaves do banco de dados). Avise o professor.";
+    render();
+    return;
+  }
+
   if(!state.projectName.trim()){
     state.errorMsg = "Informe o nome do projeto ou da dupla que você está avaliando.";
     render();
@@ -611,7 +628,7 @@ async function handleSubmit(){
     render();
   }catch(e){
     state.submitting = false;
-    state.errorMsg = "Não foi possível enviar agora. Verifique sua conexão e tente novamente.";
+    state.errorMsg = "Não foi possível enviar agora (" + (e && e.message ? e.message : "erro desconhecido") + "). Verifique sua conexão e tente novamente.";
     render();
   }
 }
@@ -629,6 +646,29 @@ function renderProfessorView(){
   lede.innerHTML = "Resultados enviados pela turma em tempo real, com base nos critérios oficiais da atividade <b>Vídeo Pitch Tecnológico</b> (100 pts).";
   container.appendChild(h1);
   container.appendChild(lede);
+
+  if(!isConfigured()){
+    var conf = document.createElement("div");
+    conf.className = "card empty-state";
+    conf.innerHTML = '<div class="ic">⚙️</div><b>Banco de dados não configurado</b>' +
+      '<p>Abra o arquivo HTML, procure por <code style="color:var(--accent)">JSONBIN_MASTER_KEY</code> e <code style="color:var(--accent)">JSONBIN_BIN_ID</code> perto do início do script, e cole as chaves da sua conta JSONBin.io.</p>';
+    container.appendChild(conf);
+    return container;
+  }
+
+  if(state.dashboardError){
+    var errCard = document.createElement("div");
+    errCard.className = "card empty-state";
+    errCard.innerHTML = '<div class="ic">⚠️</div><b>Não foi possível carregar os dados</b><p>' + escapeHtml(state.dashboardError) + '</p>';
+    var retryBtn = document.createElement("button");
+    retryBtn.className = "btn ghost";
+    retryBtn.style.margin = "16px auto 0";
+    retryBtn.textContent = "Tentar novamente";
+    retryBtn.onclick = function(){ refreshDashboard(); };
+    errCard.appendChild(retryBtn);
+    container.appendChild(errCard);
+    return container;
+  }
 
   var topRow = document.createElement("div");
   topRow.style.display = "flex";
@@ -884,9 +924,15 @@ function renderProjectDetail(projectName, reviews){
 
 async function refreshDashboard(){
   state.dashboardLoading = true;
+  state.dashboardError = "";
   if(state.view === "professor") render();
-  var data = await loadAllReviews();
-  state.dashboardData = data;
+  try{
+    var data = await loadAllReviews();
+    state.dashboardData = data;
+  }catch(e){
+    state.dashboardError = e && e.message ? e.message : "Erro desconhecido ao carregar.";
+    state.dashboardData = [];
+  }
   state.dashboardLoading = false;
   if(state.view === "professor") render();
 }
