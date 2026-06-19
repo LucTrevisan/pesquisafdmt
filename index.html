@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação — Vídeo Pitch Tecnológico | SENAI</title>
+<style>
+  :root{
+    --bg: #0d1117;
+    --bg-elev: #151b23;
+    --bg-card: #1a2129;
+    --border: #2a3340;
+    --border-soft: #212934;
+    --text: #eef2f6;
+    --text-dim: #8b96a3;
+    --text-faint: #5b6573;
+    --accent: #ff7a1a;
+    --accent-dim: #c9590e;
+    --accent-bg: rgba(255,122,26,0.12);
+    --blue: #3aa0ff;
+    --blue-bg: rgba(58,160,255,0.12);
+    --green: #34c77b;
+    --green-bg: rgba(52,199,123,0.12);
+    --red: #ff5c5c;
+    --red-bg: rgba(255,92,92,0.12);
+    --radius: 14px;
+    --radius-sm: 9px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family: var(--font);
+    background: radial-gradient(ellipse at top, #131a22 0%, var(--bg) 55%);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{ max-width: 760px; margin: 0 auto; padding: 28px 18px 80px; }
+  .wrap.wide{ max-width: 1080px; }
+
+  /* HEADER */
+  header.top{
+    display:flex; align-items:center; justify-content: space-between;
+    margin-bottom: 26px; gap: 12px; flex-wrap: wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand .mark{
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:14px; color:#1a0e05; letter-spacing:-0.5px;
+    flex-shrink:0;
+  }
+  .brand .tt{ line-height:1.25; }
+  .brand .tt b{ font-size:15px; font-weight:700; display:block; }
+  .brand .tt span{ font-size:12px; color:var(--text-dim); }
+  .switcher{
+    display:flex; background:var(--bg-elev); border:1px solid var(--border);
+    border-radius: 999px; padding:3px; font-size:13px;
+  }
+  .switcher a{
+    padding:7px 14px; border-radius:999px; text-decoration:none;
+    color:var(--text-dim); font-weight:600; transition:.15s;
+  }
+  .switcher a.active{ background:var(--accent); color:#1a0e05; }
+
+  h1{ font-size: 24px; font-weight:800; letter-spacing:-0.3px; margin-bottom:6px; }
+  .lede{ color:var(--text-dim); font-size:14.5px; line-height:1.55; margin-bottom: 22px; }
+  .lede b{ color:var(--text); }
+
+  /* CARD */
+  .card{
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 18px;
+  }
+  .card-title{
+    font-size:15px; font-weight:700; margin-bottom: 4px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .card-title .n{
+    width:22px; height:22px; border-radius:6px; background:var(--accent-bg);
+    color:var(--accent); font-size:12px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .card-sub{ font-size:13px; color:var(--text-dim); margin-bottom:16px; line-height:1.5; }
+
+  label.field-label{
+    display:block; font-size:13px; font-weight:600; color:var(--text);
+    margin-bottom:7px; margin-top:14px;
+  }
+  label.field-label:first-of-type{ margin-top:0; }
+  input[type=text], textarea, select{
+    width:100%; background: var(--bg-elev); border:1px solid var(--border);
+    color:var(--text); border-radius: var(--radius-sm); padding:10px 12px;
+    font-size:14px; font-family:inherit; outline:none; transition:.15s;
+  }
+  input[type=text]:focus, textarea:focus, select:focus{ border-color:var(--accent); }
+  textarea{ resize:vertical; min-height:70px; line-height:1.5; }
+  ::placeholder{ color: var(--text-faint); }
+
+  /* STAR RATING */
+  .crit-block{
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 16px 16px 14px;
+    margin-bottom: 12px;
+    background: var(--bg-elev);
+  }
+  .crit-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;}
+  .crit-name{ font-size:14px; font-weight:700; }
+  .crit-pts{ font-size:11px; font-weight:700; color:var(--accent); background:var(--accent-bg); padding:2px 8px; border-radius:999px; flex-shrink:0; white-space:nowrap;}
+  .crit-desc{ font-size:12.5px; color:var(--text-dim); line-height:1.5; margin-bottom:12px; }
+  .stars{ display:flex; gap:6px; }
+  .star-btn{
+    width:38px; height:38px; border-radius:9px; border:1px solid var(--border);
+    background:var(--bg-card); color:var(--text-faint); cursor:pointer;
+    font-size:18px; display:flex; align-items:center; justify-content:center;
+    transition:.12s; flex-shrink:0;
+  }
+  .star-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .star-btn.on{ background:var(--accent); border-color:var(--accent); color:#1a0e05; }
+  .star-hint{ font-size:11.5px; color:var(--text-faint); margin-top:8px; min-height:14px;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background: var(--accent); color:#1a0e05; border:none; cursor:pointer;
+    font-weight:700; font-size:14.5px; padding:13px 22px; border-radius: var(--radius-sm);
+    width:100%; transition:.15s; font-family:inherit;
+  }
+  .btn:hover{ background:#ff8c3a; }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn.ghost{
+    background:transparent; color:var(--text-dim); border:1px solid var(--border);
+    font-weight:600; font-size:13px; width:auto; padding:9px 16px;
+  }
+  .btn.ghost:hover{ border-color:var(--text-dim); color:var(--text); background:transparent; }
+
+  .error-msg{
+    background:var(--red-bg); border:1px solid rgba(255,92,92,0.35); color:#ff8a8a;
+    font-size:13px; padding:10px 14px; border-radius:var(--radius-sm); margin-bottom:14px;
+    display:none;
+  }
+
+  .success-screen{ text-align:center; padding: 50px 20px; }
+  .success-screen .ic{
+    width:64px; height:64px; border-radius:50%; background:var(--green-bg);
+    color:var(--green); font-size:30px; display:flex; align-items:center; justify-content:center;
+    margin: 0 auto 18px;
+  }
+  .success-screen h2{ font-size:19px; margin-bottom:8px; }
+  .success-screen p{ color:var(--text-dim); font-size:14px; max-width:380px; margin:0 auto 22px; line-height:1.55;}
+
+  /* DASHBOARD */
+  .metrics-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:20px;}
+  .metric{ background:var(--bg-card); border:1px solid var(--border-soft); border-radius:var(--radius); padding:16px;}
+  .metric .lbl{ font-size:12px; color:var(--text-dim); margin-bottom:6px; }
+  .metric .val{ font-size:26px; font-weight:800; letter-spacing:-0.5px; }
+  .metric .val.accent{ color:var(--accent); }
+
+  .empty-state{
+    text-align:center; padding:60px 20px; color:var(--text-dim);
+  }
+  .empty-state .ic{ font-size:34px; margin-bottom:14px; opacity:.5; }
+  .empty-state b{ display:block; color:var(--text); font-size:15px; margin-bottom:6px; }
+  .empty-state p{ font-size:13px; max-width:340px; margin:0 auto; line-height:1.5;}
+
+  .proj-select-row{ display:flex; gap:10px; align-items:center; margin-bottom:18px; flex-wrap:wrap;}
+  .proj-select-row select{ flex:1; min-width:180px; }
+
+  .bar-row{ display:grid; grid-template-columns: 150px 1fr 50px; gap:10px; align-items:center; margin-bottom:11px; font-size:13px;}
+  .bar-row .lbl{ color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bar-track{ height:10px; background:var(--bg-elev); border-radius:999px; overflow:hidden; border:1px solid var(--border-soft);}
+  .bar-fill{ height:100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); border-radius:999px; transition: width .4s ease;}
+  .bar-val{ text-align:right; font-weight:700; font-size:12.5px; color:var(--text); }
+
+  .review-card{ border:1px solid var(--border-soft); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:10px; background:var(--bg-elev);}
+  .review-card .rc-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:10px;}
+  .review-card .rc-name{ font-weight:700; font-size:13.5px; }
+  .review-card .rc-score{ font-size:13px; font-weight:800; color:var(--accent); flex-shrink:0;}
+  .review-card .rc-comment{ font-size:13px; color:var(--text-dim); line-height:1.5; font-style:italic; }
+  .review-card .rc-meta{ font-size:11px; color:var(--text-faint); margin-top:6px; }
+
+  .tab-row{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+  .tab-btn{
+    padding:8px 14px; border-radius:999px; border:1px solid var(--border); background:transparent;
+    color:var(--text-dim); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;
+  }
+  .tab-btn.active{ background:var(--accent-bg); color:var(--accent); border-color:transparent;}
+
+  .section-title{ font-size:15px; font-weight:700; margin:28px 0 14px; display:flex; align-items:center; gap:8px;}
+
+  footer.foot{ text-align:center; color:var(--text-faint); font-size:11.5px; margin-top:40px; line-height:1.6;}
+
+  @media (max-width: 480px){
+    .bar-row{ grid-template-columns: 92px 1fr 42px; gap:6px; }
+    .stars{ flex-wrap:wrap; }
+    .star-btn{ width:34px; height:34px; font-size:16px;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+
+/* ============================================================
+   CONFIG — critérios oficiais da atividade (página do pitch)
+   ============================================================ */
+var CRITERIA = [
+  {
+    key: "conteudo",
+    name: "Conteúdo e estrutura",
+    pts: 30,
+    desc: "Seguiu os 6 slides obrigatórios? O problema e a solução ficaram claros e relacionados à área de Eletroeletrônica/tecnologia? As informações fizeram sentido?"
+  },
+  {
+    key: "ferramentas",
+    name: "Uso das ferramentas",
+    pts: 25,
+    desc: "Deu pra perceber animação, transição entre slides, paleta de cores e tipografia bem escolhidas, ícones? Ou pareceu o template padrão sem personalização?"
+  },
+  {
+    key: "visual",
+    name: "Qualidade visual",
+    pts: 20,
+    desc: "Os slides tinham hierarquia clara, eram legíveis, organizados, com cores e fontes consistentes do início ao fim?"
+  },
+  {
+    key: "video",
+    name: "Vídeo e narração",
+    pts: 15,
+    desc: "O áudio estava claro, a narração fluente, dentro do tempo, e o vídeo rodou bem?"
+  },
+  {
+    key: "oral",
+    name: "Apresentação oral",
+    pts: 10,
+    desc: "O(a) apresentador(a) demonstrou domínio do tema, boa postura, e respondeu bem às perguntas da turma?"
+  }
+];
+
+var STAR_HINTS = ["", "Fraco", "Regular", "Bom", "Muito bom", "Excelente"];
+
+var STORAGE_KEY_PREFIX = "pitch_review:";
+var PROJECTS_KEY = "pitch_projects_list";
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var state = {
+  view: "aluno",
+  ratings: {},
+  projectName: "",
+  evaluatorName: "",
+  comment: "",
+  submitting: false,
+  submitted: false,
+  errorMsg: "",
+  dashboardData: [],
+  dashboardLoading: true,
+  filterProject: "__all__",
+  knownProjects: []
+};
+
+CRITERIA.forEach(function(c){ state.ratings[c.key] = 0; });
+
+/* ============================================================
+   STORAGE HELPERS
+   ============================================================ */
+function uid(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+
+function safeParse(str, fallback){
+  try { return JSON.parse(str); } catch(e){ return fallback; }
+}
+
+async function loadProjectsList(){
+  try{
+    var res = await window.storage.get(PROJECTS_KEY, true);
+    if(res && res.value){
+      return safeParse(res.value, []);
+    }
+  }catch(e){}
+  return [];
+}
+
+async function addProjectToList(name){
+  var list = await loadProjectsList();
+  if(list.indexOf(name) === -1){
+    list.push(name);
+    try{
+      await window.storage.set(PROJECTS_KEY, JSON.stringify(list), true);
+    }catch(e){}
+  }
+}
+
+async function saveReview(review){
+  var key = STORAGE_KEY_PREFIX + uid();
+  await window.storage.set(key, JSON.stringify(review), true);
+  await addProjectToList(review.projectName);
+}
+
+async function loadAllReviews(){
+  var out = [];
+  try{
+    var listRes = await window.storage.list(STORAGE_KEY_PREFIX, true);
+    if(listRes && listRes.keys && listRes.keys.length){
+      for(var i=0;i<listRes.keys.length;i++){
+        try{
+          var item = await window.storage.get(listRes.keys[i], true);
+          if(item && item.value){
+            var parsed = safeParse(item.value, null);
+            if(parsed) out.push(parsed);
+          }
+        }catch(e){}
+      }
+    }
+  }catch(e){}
+  out.sort(function(a,b){ return (b.ts||0) - (a.ts||0); });
+  return out;
+}
+
+/* ============================================================
+   RENDER ROOT
+   ============================================================ */
+function render(){
+  var app = document.getElementById("app");
+  app.innerHTML = "";
+  var wrap = document.createElement("div");
+  wrap.className = "wrap" + (state.view === "professor" ? " wide" : "");
+  wrap.appendChild(renderHeader());
+
+  if(state.view === "aluno"){
+    wrap.appendChild(renderAlunoView());
+  } else {
+    wrap.appendChild(renderProfessorView());
+  }
+
+  var foot = document.createElement("footer");
+  foot.className = "foot";
+  foot.innerHTML = "SENAI · CFP Antonio Adolphe Lobbe · São Carlos – SP<br>Técnico em Eletroeletrônica · Ferramentas Digitais · Vídeo Pitch Tecnológico";
+  wrap.appendChild(foot);
+
+  app.appendChild(wrap);
+}
+
+function renderHeader(){
+  var header = document.createElement("header");
+  header.className = "top";
+
+  var brand = document.createElement("div");
+  brand.className = "brand";
+  brand.innerHTML =
+    '<div class="mark">PITCH</div>' +
+    '<div class="tt"><b>Avaliação do Pitch</b><span>Plateia avalia, professor acompanha</span></div>';
+
+  var switcher = document.createElement("div");
+  switcher.className = "switcher";
+  var aLink = document.createElement("a");
+  aLink.textContent = "Avaliar (aluno)";
+  aLink.href = "#aluno";
+  aLink.className = state.view === "aluno" ? "active" : "";
+  aLink.onclick = function(e){ e.preventDefault(); goTo("aluno"); };
+
+  var pLink = document.createElement("a");
+  pLink.textContent = "Dashboard (professor)";
+  pLink.href = "#professor";
+  pLink.className = state.view === "professor" ? "active" : "";
+  pLink.onclick = function(e){ e.preventDefault(); goTo("professor"); };
+
+  switcher.appendChild(aLink);
+  switcher.appendChild(pLink);
+
+  header.appendChild(brand);
+  header.appendChild(switcher);
+  return header;
+}
+
+function goTo(view){
+  window.location.hash = view;
+  state.view = view;
+  if(view === "professor"){
+    state.dashboardLoading = true;
+    render();
+    refreshDashboard();
+  } else {
+    render();
+  }
+}
+
+/* ============================================================
+   ALUNO VIEW (formulário de avaliação)
+   ============================================================ */
+function renderAlunoView(){
+  var container = document.createElement("div");
+
+  if(state.submitted){
+    var s = document.createElement("div");
+    s.className = "card success-screen";
+    s.innerHTML =
+      '<div class="ic"><i></i>&#10003;</div>' +
+      '<h2>Avaliação enviada!</h2>' +
+      '<p>Obrigado por avaliar <b style="color:var(--text)">' + escapeHtml(state.lastProjectName||"") + '</b>. Sua opinião ajuda o colega a melhorar.</p>';
+    var btn = document.createElement("button");
+    btn.className = "btn ghost";
+    btn.style.margin = "0 auto";
+    btn.textContent = "Avaliar outra apresentação";
+    btn.onclick = function(){
+      resetForm();
+      render();
+    };
+    s.appendChild(document.createElement("br"));
+    s.appendChild(btn);
+    container.appendChild(s);
+    return container;
+  }
+
+  var h1 = document.createElement("h1");
+  h1.textContent = "Avalie a apresentação que você assistiu";
+  var lede = document.createElement("p");
+  lede.className = "lede";
+  lede.innerHTML = "Use os mesmos critérios da atividade <b>Vídeo Pitch Tecnológico</b>. Seja honesto e respeitoso — sua nota ajuda o colega a entender o que funcionou e o que pode melhorar. Leva menos de 2 minutos.";
+  container.appendChild(h1);
+  container.appendChild(lede);
+
+  if(state.errorMsg){
+    var err = document.createElement("div");
+    err.className = "error-msg";
+    err.style.display = "block";
+    err.textContent = state.errorMsg;
+    container.appendChild(err);
+  }
+
+  // Card 1: identificação
+  var idCard = document.createElement("div");
+  idCard.className = "card";
+  idCard.innerHTML =
+    '<div class="card-title"><span class="n">1</span>Quem você está avaliando</div>' +
+    '<div class="card-sub">O nome do projeto deve ser igual ao que aparece no slide de capa do colega.</div>';
+
+  var projLabel = document.createElement("label");
+  projLabel.className = "field-label";
+  projLabel.textContent = "Nome do projeto / dupla apresentadora *";
+  var projInput = document.createElement("input");
+  projInput.type = "text";
+  projInput.placeholder = "Ex.: Irriga+ ou João e Maria";
+  projInput.value = state.projectName;
+  projInput.oninput = function(e){ state.projectName = e.target.value; };
+
+  var youLabel = document.createElement("label");
+  youLabel.className = "field-label";
+  youLabel.textContent = "Seu nome (opcional)";
+  var youInput = document.createElement("input");
+  youInput.type = "text";
+  youInput.placeholder = "Deixe em branco para avaliar de forma anônima";
+  youInput.value = state.evaluatorName;
+  youInput.oninput = function(e){ state.evaluatorName = e.target.value; };
+
+  idCard.appendChild(projLabel);
+  idCard.appendChild(projInput);
+  idCard.appendChild(youLabel);
+  idCard.appendChild(youInput);
+  container.appendChild(idCard);
+
+  // Card 2: critérios
+  var critCard = document.createElement("div");
+  critCard.className = "card";
+  critCard.innerHTML = '<div class="card-title"><span class="n">2</span>Critérios de avaliação</div>' +
+    '<div class="card-sub">Dê de 1 a 5 estrelas em cada critério. Sua nota vira pontos automaticamente, seguindo o peso oficial de cada critério (total 100 pts).</div>';
+
+  CRITERIA.forEach(function(c){
+    critCard.appendChild(renderCriterionBlock(c));
+  });
+  container.appendChild(critCard);
+
+  // Card 3: comentário
+  var comCard = document.createElement("div");
+  comCard.className = "card";
+  comCard.innerHTML = '<div class="card-title"><span class="n">3</span>Comentário</div>' +
+    '<div class="card-sub">O que mais te chamou atenção, positivo ou a melhorar? (opcional, mas ajuda muito)</div>';
+  var textarea = document.createElement("textarea");
+  textarea.placeholder = "Ex.: Gostei muito da explicação do funcionamento, mas o áudio ficou baixo em alguns momentos...";
+  textarea.value = state.comment;
+  textarea.oninput = function(e){ state.comment = e.target.value; };
+  comCard.appendChild(textarea);
+  container.appendChild(comCard);
+
+  // Live total
+  var totalCard = document.createElement("div");
+  totalCard.className = "card";
+  totalCard.style.display = "flex";
+  totalCard.style.justifyContent = "space-between";
+  totalCard.style.alignItems = "center";
+  var totalPts = computeTotal();
+  totalCard.innerHTML =
+    '<div><div style="font-size:13px;color:var(--text-dim);margin-bottom:4px;">Nota calculada</div>' +
+    '<div style="font-size:13px;color:var(--text-faint);">Soma dos 5 critérios, peso oficial da atividade</div></div>' +
+    '<div style="font-size:30px;font-weight:800;color:var(--accent);">' + totalPts + '<span style="font-size:15px;color:var(--text-dim);font-weight:600;">/100</span></div>';
+  container.appendChild(totalCard);
+
+  var submitBtn = document.createElement("button");
+  submitBtn.className = "btn";
+  submitBtn.textContent = state.submitting ? "Enviando..." : "Enviar avaliação";
+  submitBtn.disabled = state.submitting;
+  submitBtn.onclick = handleSubmit;
+  container.appendChild(submitBtn);
+
+  return container;
+}
+
+function renderCriterionBlock(c){
+  var block = document.createElement("div");
+  block.className = "crit-block";
+
+  var head = document.createElement("div");
+  head.className = "crit-head";
+  head.innerHTML =
+    '<div class="crit-name">' + escapeHtml(c.name) + '</div>' +
+    '<div class="crit-pts">' + c.pts + ' pts</div>';
+
+  var desc = document.createElement("div");
+  desc.className = "crit-desc";
+  desc.textContent = c.desc;
+
+  var stars = document.createElement("div");
+  stars.className = "stars";
+
+  var hint = document.createElement("div");
+  hint.className = "star-hint";
+  hint.textContent = state.ratings[c.key] ? STAR_HINTS[state.ratings[c.key]] : "Toque para avaliar";
+
+  for(var i=1;i<=5;i++){
+    (function(val){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "star-btn" + (state.ratings[c.key] >= val ? " on" : "");
+      b.textContent = "★";
+      b.setAttribute("aria-label", c.name + ": " + val + " de 5");
+      b.onclick = function(){
+        state.ratings[c.key] = val;
+        render();
+      };
+      stars.appendChild(b);
+    })(i);
+  }
+
+  block.appendChild(head);
+  block.appendChild(desc);
+  block.appendChild(stars);
+  block.appendChild(hint);
+  return block;
+}
+
+function computeTotal(){
+  var total = 0;
+  CRITERIA.forEach(function(c){
+    var stars = state.ratings[c.key] || 0;
+    total += (stars/5) * c.pts;
+  });
+  return Math.round(total);
+}
+
+function resetForm(){
+  state.projectName = "";
+  state.evaluatorName = "";
+  state.comment = "";
+  state.ratings = {};
+  CRITERIA.forEach(function(c){ state.ratings[c.key] = 0; });
+  state.submitted = false;
+  state.errorMsg = "";
+}
+
+async function handleSubmit(){
+  state.errorMsg = "";
+
+  if(!state.projectName.trim()){
+    state.errorMsg = "Informe o nome do projeto ou da dupla que você está avaliando.";
+    render();
+    return;
+  }
+  var missing = CRITERIA.filter(function(c){ return !state.ratings[c.key]; });
+  if(missing.length > 0){
+    state.errorMsg = "Dê uma nota em todos os critérios antes de enviar (faltou: " + missing.map(function(c){return c.name;}).join(", ") + ").";
+    render();
+    return;
+  }
+
+  state.submitting = true;
+  render();
+
+  var review = {
+    id: uid(),
+    projectName: state.projectName.trim(),
+    evaluatorName: state.evaluatorName.trim(),
+    comment: state.comment.trim(),
+    ratings: Object.assign({}, state.ratings),
+    total: computeTotal(),
+    ts: Date.now()
+  };
+
+  try{
+    await saveReview(review);
+    state.lastProjectName = review.projectName;
+    state.submitting = false;
+    state.submitted = true;
+    render();
+  }catch(e){
+    state.submitting = false;
+    state.errorMsg = "Não foi possível enviar agora. Verifique sua conexão e tente novamente.";
+    render();
+  }
+}
+
+/* ============================================================
+   PROFESSOR VIEW (dashboard)
+   ============================================================ */
+function renderProfessorView(){
+  var container = document.createElement("div");
+
+  var h1 = document.createElement("h1");
+  h1.textContent = "Dashboard de avaliações";
+  var lede = document.createElement("p");
+  lede.className = "lede";
+  lede.innerHTML = "Resultados enviados pela turma em tempo real, com base nos critérios oficiais da atividade <b>Vídeo Pitch Tecnológico</b> (100 pts).";
+  container.appendChild(h1);
+  container.appendChild(lede);
+
+  var topRow = document.createElement("div");
+  topRow.style.display = "flex";
+  topRow.style.gap = "10px";
+  topRow.style.marginBottom = "20px";
+  topRow.style.flexWrap = "wrap";
+  var refreshBtn = document.createElement("button");
+  refreshBtn.className = "btn ghost";
+  refreshBtn.textContent = state.dashboardLoading ? "Atualizando..." : "Atualizar dados";
+  refreshBtn.onclick = function(){ refreshDashboard(); };
+  topRow.appendChild(refreshBtn);
+  container.appendChild(topRow);
+
+  if(state.dashboardLoading){
+    var loading = document.createElement("div");
+    loading.className = "card empty-state";
+    loading.innerHTML = '<div class="ic">⏳</div><b>Carregando avaliações...</b>';
+    container.appendChild(loading);
+    return container;
+  }
+
+  var data = state.dashboardData;
+
+  if(data.length === 0){
+    var empty = document.createElement("div");
+    empty.className = "card empty-state";
+    empty.innerHTML = '<div class="ic">📭</div><b>Nenhuma avaliação recebida ainda</b><p>Assim que os alunos preencherem o formulário de avaliação, os resultados aparecem aqui automaticamente.</p>';
+    container.appendChild(empty);
+    return container;
+  }
+
+  // Agrupar por projeto
+  var byProject = {};
+  data.forEach(function(r){
+    var key = r.projectName || "Sem nome";
+    if(!byProject[key]) byProject[key] = [];
+    byProject[key].push(r);
+  });
+  var projectNames = Object.keys(byProject).sort();
+
+  // Métricas gerais
+  var totalReviews = data.length;
+  var avgAll = Math.round(data.reduce(function(s,r){return s + (r.total||0);},0) / totalReviews);
+  var bestProject = projectNames.reduce(function(best, name){
+    var avg = avgOf(byProject[name]);
+    if(!best || avg > best.avg) return {name: name, avg: avg};
+    return best;
+  }, null);
+
+  var metrics = document.createElement("div");
+  metrics.className = "metrics-grid";
+  metrics.innerHTML =
+    metricHtml("Avaliações recebidas", totalReviews, false) +
+    metricHtml("Projetos avaliados", projectNames.length, false) +
+    metricHtml("Nota média geral", avgAll + " / 100", true) +
+    metricHtml("Melhor avaliado", bestProject ? bestProject.name + " (" + bestProject.avg + ")" : "—", true, true);
+  container.appendChild(metrics);
+
+  // Filtro por projeto
+  var filterRow = document.createElement("div");
+  filterRow.className = "proj-select-row";
+  var selLabel = document.createElement("span");
+  selLabel.style.fontSize = "13px";
+  selLabel.style.color = "var(--text-dim)";
+  selLabel.textContent = "Ver projeto:";
+  var sel = document.createElement("select");
+  var optAll = document.createElement("option");
+  optAll.value = "__all__";
+  optAll.textContent = "Todos os projetos (ranking)";
+  sel.appendChild(optAll);
+  projectNames.forEach(function(name){
+    var opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name + " (" + byProject[name].length + " avaliações)";
+    sel.appendChild(opt);
+  });
+  sel.value = state.filterProject;
+  sel.onchange = function(e){
+    state.filterProject = e.target.value;
+    render();
+  };
+  filterRow.appendChild(selLabel);
+  filterRow.appendChild(sel);
+  container.appendChild(filterRow);
+
+  if(state.filterProject === "__all__"){
+    container.appendChild(renderRanking(byProject, projectNames));
+  } else {
+    container.appendChild(renderProjectDetail(state.filterProject, byProject[state.filterProject] || []));
+  }
+
+  return container;
+}
+
+function metricHtml(label, value, accent, small){
+  return '<div class="metric"><div class="lbl">' + escapeHtml(label) + '</div>' +
+    '<div class="val' + (accent ? ' accent' : '') + '" style="' + (small ? 'font-size:16px;' : '') + '">' + escapeHtml(String(value)) + '</div></div>';
+}
+
+function avgOf(reviews){
+  if(!reviews.length) return 0;
+  return Math.round(reviews.reduce(function(s,r){return s + (r.total||0);},0) / reviews.length);
+}
+
+function avgCriterion(reviews, key){
+  if(!reviews.length) return 0;
+  var sum = reviews.reduce(function(s,r){ return s + (r.ratings && r.ratings[key] ? r.ratings[key] : 0); }, 0);
+  return sum / reviews.length;
+}
+
+function renderRanking(byProject, projectNames){
+  var wrap = document.createElement("div");
+
+  var title = document.createElement("div");
+  title.className = "section-title";
+  title.textContent = "Ranking por nota média";
+  wrap.appendChild(title);
+
+  var rankCard = document.createElement("div");
+  rankCard.className = "card";
+
+  var ranked = projectNames.map(function(name){
+    return { name: name, avg: avgOf(byProject[name]), count: byProject[name].length };
+  }).sort(function(a,b){ return b.avg - a.avg; });
+
+  var maxAvg = Math.max.apply(null, ranked.map(function(r){return r.avg;}).concat([1]));
+
+  ranked.forEach(function(r){
+    var row = document.createElement("div");
+    row.className = "bar-row";
+    var lbl = document.createElement("div");
+    lbl.className = "lbl";
+    lbl.title = r.name;
+    lbl.textContent = r.name;
+    var track = document.createElement("div");
+    track.className = "bar-track";
+    var fill = document.createElement("div");
+    fill.className = "bar-fill";
+    fill.style.width = Math.max(4, (r.avg / maxAvg) * 100) + "%";
+    track.appendChild(fill);
+    var val = document.createElement("div");
+    val.className = "bar-val";
+    val.textContent = r.avg;
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(val);
+    rankCard.appendChild(row);
+  });
+  wrap.appendChild(rankCard);
+
+  var critTitle = document.createElement("div");
+  critTitle.className = "section-title";
+  critTitle.textContent = "Médias por critério (turma toda)";
+  wrap.appendChild(critTitle);
+
+  var allReviews = [];
+  projectNames.forEach(function(n){ allReviews = allReviews.concat(byProject[n]); });
+
+  var critCard = document.createElement("div");
+  critCard.className = "card";
+  CRITERIA.forEach(function(c){
+    var avgStars = avgCriterion(allReviews, c.key);
+    var row = document.createElement("div");
+    row.className = "bar-row";
+    var lbl = document.createElement("div");
+    lbl.className = "lbl";
+    lbl.textContent = c.name;
+    var track = document.createElement("div");
+    track.className = "bar-track";
+    var fill = document.createElement("div");
+    fill.className = "bar-fill";
+    fill.style.width = Math.max(4, (avgStars/5)*100) + "%";
+    track.appendChild(fill);
+    var val = document.createElement("div");
+    val.className = "bar-val";
+    val.textContent = avgStars.toFixed(1) + "★";
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(val);
+    critCard.appendChild(row);
+  });
+  wrap.appendChild(critCard);
+
+  return wrap;
+}
+
+function renderProjectDetail(projectName, reviews){
+  var wrap = document.createElement("div");
+
+  var title = document.createElement("div");
+  title.className = "section-title";
+  title.textContent = projectName + " — médias por critério";
+  wrap.appendChild(title);
+
+  var critCard = document.createElement("div");
+  critCard.className = "card";
+  CRITERIA.forEach(function(c){
+    var avgStars = avgCriterion(reviews, c.key);
+    var ptsEarned = Math.round((avgStars/5) * c.pts);
+    var row = document.createElement("div");
+    row.className = "bar-row";
+    var lbl = document.createElement("div");
+    lbl.className = "lbl";
+    lbl.textContent = c.name;
+    var track = document.createElement("div");
+    track.className = "bar-track";
+    var fill = document.createElement("div");
+    fill.className = "bar-fill";
+    fill.style.width = Math.max(4, (avgStars/5)*100) + "%";
+    track.appendChild(fill);
+    var val = document.createElement("div");
+    val.className = "bar-val";
+    val.textContent = ptsEarned + "/" + c.pts;
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(val);
+    critCard.appendChild(row);
+  });
+  var totalAvg = avgOf(reviews);
+  var totalRow = document.createElement("div");
+  totalRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border-soft);";
+  totalRow.innerHTML = '<span style="font-weight:700;font-size:14px;">Nota final média</span><span style="font-weight:800;font-size:20px;color:var(--accent);">' + totalAvg + '/100</span>';
+  critCard.appendChild(totalRow);
+  wrap.appendChild(critCard);
+
+  var comTitle = document.createElement("div");
+  comTitle.className = "section-title";
+  comTitle.textContent = "Comentários (" + reviews.length + " avaliações)";
+  wrap.appendChild(comTitle);
+
+  var sorted = reviews.slice().sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+  var any = false;
+  sorted.forEach(function(r){
+    if(!r.comment) return;
+    any = true;
+    var rc = document.createElement("div");
+    rc.className = "review-card";
+    rc.innerHTML =
+      '<div class="rc-head"><span class="rc-name">' + escapeHtml(r.evaluatorName || "Anônimo") + '</span><span class="rc-score">' + (r.total||0) + '/100</span></div>' +
+      '<div class="rc-comment">"' + escapeHtml(r.comment) + '"</div>';
+    wrap.appendChild(rc);
+  });
+  if(!any){
+    var noCom = document.createElement("div");
+    noCom.className = "card empty-state";
+    noCom.style.padding = "30px 20px";
+    noCom.innerHTML = '<p style="margin:0;">Nenhum comentário escrito para este projeto ainda.</p>';
+    wrap.appendChild(noCom);
+  }
+
+  return wrap;
+}
+
+async function refreshDashboard(){
+  state.dashboardLoading = true;
+  if(state.view === "professor") render();
+  var data = await loadAllReviews();
+  state.dashboardData = data;
+  state.dashboardLoading = false;
+  if(state.view === "professor") render();
+}
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function escapeHtml(str){
+  if(str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+/* ============================================================
+   INIT / ROUTER
+   ============================================================ */
+function initRoute(){
+  var h = window.location.hash.replace("#","");
+  if(h === "professor") state.view = "professor";
+  else state.view = "aluno";
+}
+
+window.addEventListener("hashchange", function(){
+  initRoute();
+  render();
+  if(state.view === "professor") refreshDashboard();
+});
+
+initRoute();
+render();
+if(state.view === "professor") refreshDashboard();
+
+})();
+</script>
+</body>
+</html>
